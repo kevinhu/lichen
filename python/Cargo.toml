@@ -1,5 +1,5 @@
 [package]
-name = "lichen"
+name = "lichenpy"
 version = "0.1.0"
 edition = "2021"
 description = "Fast link extraction from HTML documents"
@@ -8,7 +8,7 @@ repository = "https://github.com/kevinhu/lichen"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "lichen"
+name = "lichenpy"
 crate-type = ["cdylib"]
 
 [dependencies]

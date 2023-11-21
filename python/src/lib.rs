@@ -9,7 +9,7 @@ fn extract_links(html: &str, base_url: &str) -> PyResult<Vec<String>> {
 }
 
 #[pymodule]
-fn lichen(_py: Python, m: &PyModule) -> PyResult<()> {
+fn lichenpy(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(extract_links, m)?)?;
     Ok(())
 }
