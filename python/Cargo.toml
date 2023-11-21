@@ -1,0 +1,16 @@
+[package]
+name = "lichen"
+version = "0.1.0"
+edition = "2021"
+description = "Fast link extraction from HTML documents"
+license = "MIT"
+repository = "https://github.com/kevinhu/lichen"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "lichen"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = "0.19.0"
+lichen_core = { path = "../lichen_core" }
