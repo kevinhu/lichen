@@ -1,7 +1,8 @@
 use lol_html::{element, HtmlRewriter, Settings};
 use url::Url;
+use std::error::Error;
 
-pub fn extract_links(html: &str, base_url: &str) -> Result<Vec<String>, url::ParseError> {
+pub fn extract_links(html: &str, base_url: &str) -> Result<Vec<String>, Box<dyn Error>> {
     let mut links = vec![];
 
     let mut rewriter = HtmlRewriter::new(
@@ -23,28 +24,34 @@ pub fn extract_links(html: &str, base_url: &str) -> Result<Vec<String>, url::Par
         |_: &[u8]| {},
     );
 
-    rewriter.write(html.as_bytes()).unwrap();
-    rewriter.end().unwrap();
+    rewriter.write(html.as_bytes())?;
+    rewriter.end()?;
 
     let base_url = Url::parse(base_url)?;
 
     let links = links
         .into_iter()
-        .map(|link| {
-            let url = Url::parse(&link);
+        .filter_map(|link| {
+            let parsed_link = Url::parse(&link);
 
-            match url {
-                Ok(url) => {
-                    if url.host_str().is_none() {
-                        let new_url = base_url.clone().join(&link).unwrap();
-                        new_url.to_string()
+            match parsed_link {
+                Ok(parsed_link) => {
+                    if parsed_link.host_str().is_none() {
+                        let joined_url = base_url.clone().join(&link);
+                        match joined_url {
+                            Ok(joined_url) => Some(joined_url.to_string()),
+                            Err(_) => None,
+                        }
                     } else {
-                        link
+                        Some(link)
                     }
                 }
                 Err(_) => {
-                    let new_url = base_url.clone().join(&link).unwrap();
-                    new_url.to_string()
+                    let new_url = base_url.clone().join(&link);
+                    match new_url {
+                        Ok(new_url) => Some(new_url.to_string()),
+                        Err(_) => None,
+                    }
                 }
             }
         })
@@ -56,6 +63,20 @@ pub fn extract_links(html: &str, base_url: &str) -> Result<Vec<String>, url::Par
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn invalid_html() {
+        let html = r#"
+            <html>
+                <head>
+                    <title>Test</title>
+                </head>
+                <body>
+        "#;
+
+        let links = extract_links(html, "https://example.com").unwrap();
+        assert_eq!(links, vec![] as Vec<String>);
+    }
 
     #[test]
     fn test_absolute_links() {
