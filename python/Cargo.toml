@@ -1,6 +1,6 @@
 [package]
 name = "lichenpy"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 description = "Fast link extraction from HTML documents"
 license = "MIT"
@@ -12,5 +12,5 @@ name = "lichenpy"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = "0.19.0"
+pyo3 = "0.20.3"
 lichen_core = { path = "../lichen_core" }
